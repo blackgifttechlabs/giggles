@@ -69,6 +69,11 @@ function renderHeader() {
     <div class="nav-inner">
       <div class="nav-item">
         <a href="${base}pages/toddler-boys.html" class="nav-link">Boys</a>
+        <button class="mobile-submenu-toggle" type="button" aria-expanded="false" aria-label="Toggle Boys menu">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </button>
         <div class="mega-dropdown">
           <div class="mega-dropdown-inner">
             <div class="mega-col">
@@ -98,6 +103,11 @@ function renderHeader() {
       </div>
       <div class="nav-item">
         <a href="${base}pages/toddler-girls.html" class="nav-link">Girls</a>
+        <button class="mobile-submenu-toggle" type="button" aria-expanded="false" aria-label="Toggle Girls menu">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </button>
         <div class="mega-dropdown">
           <div class="mega-dropdown-inner">
             <div class="mega-col">
@@ -127,6 +137,11 @@ function renderHeader() {
       </div>
       <div class="nav-item">
         <a href="#" class="nav-link">School</a>
+        <button class="mobile-submenu-toggle" type="button" aria-expanded="false" aria-label="Toggle School menu">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+            <path d="M6 9l6 6 6-6"/>
+          </svg>
+        </button>
         <div class="mega-dropdown">
           <div class="mega-dropdown-inner">
             <div class="mega-col">
@@ -269,11 +284,28 @@ function renderFooter() {
   </footer>`;
 }
 
+function renderCookieBanner() {
+  return `
+  <div class="cookie-banner" id="cookie-banner" hidden>
+    <p>
+      We use cookies to improve your online experience. If you continue to use our site, you are agreeing to our
+      <a href="#" class="cookie-link">Cookie Policy</a>.
+    </p>
+    <div class="cookie-actions">
+      <button type="button" class="cookie-btn cookie-accept">OK</button>
+      <button type="button" class="cookie-btn cookie-decline">Decline</button>
+    </div>
+  </div>`;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const headerEl = document.getElementById('site-header');
   if (headerEl) headerEl.innerHTML = renderHeader();
   const footerEl = document.getElementById('site-footer');
   if (footerEl) footerEl.innerHTML = renderFooter();
+  if (!document.getElementById('cookie-banner')) {
+    document.body.insertAdjacentHTML('beforeend', renderCookieBanner());
+  }
 
   if (!headerEl) return;
 
@@ -281,6 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeToggle = headerEl.querySelector('.mobile-nav-close');
   const navEl = headerEl.querySelector('#site-nav');
   const overlayEl = headerEl.querySelector('.mobile-nav-overlay');
+  const submenuToggles = headerEl.querySelectorAll('.mobile-submenu-toggle');
   const mobileQuery = window.matchMedia('(max-width: 768px)');
   const desktopQuery = window.matchMedia('(min-width: 769px)');
   let lastScrollY = window.scrollY;
@@ -294,6 +327,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function syncMobileNav() {
     if (!mobileQuery.matches) {
       setMobileMenuState(false);
+      headerEl.querySelectorAll('.nav-item.mobile-submenu-open').forEach((item) => {
+        item.classList.remove('mobile-submenu-open');
+      });
+      submenuToggles.forEach((toggle) => {
+        toggle.setAttribute('aria-expanded', 'false');
+      });
     }
   }
 
@@ -326,6 +365,23 @@ document.addEventListener('DOMContentLoaded', () => {
       setMobileMenuState(false);
     });
   }
+
+  submenuToggles.forEach((toggle) => {
+    toggle.addEventListener('click', (event) => {
+      event.preventDefault();
+      const navItem = toggle.closest('.nav-item');
+      if (!navItem || !mobileQuery.matches) return;
+      const willOpen = !navItem.classList.contains('mobile-submenu-open');
+      headerEl.querySelectorAll('.nav-item.mobile-submenu-open').forEach((item) => {
+        if (item !== navItem) item.classList.remove('mobile-submenu-open');
+      });
+      submenuToggles.forEach((otherToggle) => {
+        if (otherToggle !== toggle) otherToggle.setAttribute('aria-expanded', 'false');
+      });
+      navItem.classList.toggle('mobile-submenu-open', willOpen);
+      toggle.setAttribute('aria-expanded', String(willOpen));
+    });
+  });
 
   document.addEventListener('click', (event) => {
     if (!mobileQuery.matches || !headerEl.classList.contains('mobile-nav-open')) return;

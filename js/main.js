@@ -1,5 +1,52 @@
 // Nav mega dropdown hover logic
 document.addEventListener('DOMContentLoaded', () => {
+  const cookieBanner = document.getElementById('cookie-banner');
+  const cookieAccept = document.querySelector('.cookie-accept');
+  const cookieDecline = document.querySelector('.cookie-decline');
+  const consentKey = 'softgiggles_cookie_consent';
+
+  function hideCookieBanner() {
+    if (!cookieBanner) return;
+    cookieBanner.classList.add('is-hidden');
+    window.setTimeout(() => {
+      cookieBanner.hidden = true;
+    }, 240);
+  }
+
+  function saveCookieChoice(choice) {
+    try {
+      localStorage.setItem(consentKey, choice);
+    } catch (error) {
+      // Ignore storage errors and keep the UI usable.
+    }
+    document.cookie = `softgiggles_cookie_consent=${choice}; path=/; max-age=31536000; SameSite=Lax`;
+    hideCookieBanner();
+  }
+
+  if (cookieBanner) {
+    let savedChoice = null;
+    try {
+      savedChoice = localStorage.getItem(consentKey);
+    } catch (error) {
+      savedChoice = null;
+    }
+
+    if (!savedChoice) {
+      cookieBanner.hidden = false;
+      window.requestAnimationFrame(() => {
+        cookieBanner.classList.add('is-visible');
+      });
+    }
+  }
+
+  if (cookieAccept) {
+    cookieAccept.addEventListener('click', () => saveCookieChoice('accepted'));
+  }
+
+  if (cookieDecline) {
+    cookieDecline.addEventListener('click', () => saveCookieChoice('declined'));
+  }
+
   // Smooth image placeholder fallback
   document.querySelectorAll('img').forEach(img => {
     img.addEventListener('error', function() {
