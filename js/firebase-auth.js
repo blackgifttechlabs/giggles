@@ -6,6 +6,7 @@ import {
   GoogleAuthProvider,
   onAuthStateChanged,
   RecaptchaVerifier,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPhoneNumber,
   signInWithPopup,
@@ -22,12 +23,12 @@ import {
 } from 'https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyBMZPxfNdkSOForFOfW3GhaZpvZTYPMpeg',
-  authDomain: 'giggles-a5c40.firebaseapp.com',
-  projectId: 'giggles-a5c40',
-  storageBucket: 'giggles-a5c40.firebasestorage.app',
-  messagingSenderId: '99280347898',
-  appId: '1:99280347898:web:6b4722f5e95114c06f5f43'
+  apiKey: 'AIzaSyDD3a9ARK6FBJKmtuZ5v0Rnqjf8Xlp1LHA',
+  authDomain: 'worklink-5e1ff.firebaseapp.com',
+  projectId: 'worklink-5e1ff',
+  storageBucket: 'worklink-5e1ff.firebasestorage.app',
+  messagingSenderId: '1053395339078',
+  appId: '1:1053395339078:web:9847166be24ca1e42c8747'
 };
 
 const app = initializeApp(firebaseConfig);
@@ -49,13 +50,13 @@ function normalizeName(value) {
 }
 
 function fallbackNameFromUser(user) {
-  if (!user) return 'SoftGiggles Shopper';
+  if (!user) return 'WorkLinkUp User';
   if (user.displayName) return normalizeName(user.displayName);
   if (user.email) {
     return normalizeName(user.email.split('@')[0].replace(/[._-]+/g, ' '));
   }
   if (user.phoneNumber) return user.phoneNumber;
-  return 'SoftGiggles Shopper';
+  return 'WorkLinkUp User';
 }
 
 function persistUser(user) {
@@ -91,7 +92,7 @@ function slugifyIdentifier(value) {
     .toLowerCase()
     .trim()
     .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '') || 'softgiggles-shopper';
+    .replace(/^-+|-+$/g, '') || 'worklinkup-user';
 }
 
 function getAccountPayload(user = auth.currentUser) {
@@ -213,8 +214,18 @@ async function verifyPhoneCode(code) {
   return result.user;
 }
 
+async function resetPassword(email) {
+  await sendPasswordResetEmail(auth, email);
+}
+
 async function signOut() {
   await firebaseSignOut(auth);
+  try {
+    localStorage.removeItem(storageKey);
+  } catch (error) {
+    // Ignore storage issues.
+  }
+  dispatchAuthChange(null);
 }
 
 async function deleteProfile() {
@@ -275,6 +286,7 @@ window.softGigglesAuth = {
   signUpWithEmail,
   sendPhoneCode,
   verifyPhoneCode,
+  resetPassword,
   signOut,
   deleteProfile,
   addToCart,

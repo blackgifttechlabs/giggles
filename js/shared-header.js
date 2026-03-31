@@ -20,8 +20,8 @@ function renderHeader() {
   const base = getBasePath();
   const account = getStoredAccount();
   const isLoggedIn = Boolean(account && account.loggedIn);
-  const accountName = account && account.name ? account.name : 'Black Gift';
-  const accountEmail = account && account.email ? account.email : 'blackgifttechlabs@gmail.com';
+  const accountName = account && account.name ? account.name : 'WorkLinkUp User';
+  const firstName = accountName.split(' ')[0];
   return `
   <header>
     <div class="header-inner">
@@ -31,80 +31,99 @@ function renderHeader() {
             <path d="M4 7h16M4 12h16M4 17h16"/>
           </svg>
         </button>
-        <a href="${base}index.html" class="logo" aria-label="SoftGiggles home"><span class="logo-soft">SOFT</span><span class="logo-giggles">GIGGLES</span></a>
+        <a href="${base}index.html" class="logo" aria-label="WorkLinkUp home">
+          <img src="${base}images/logo/logo.png" alt="WorkLinkUp" class="logo-image" />
+          <span class="logo-wordmark" aria-hidden="true">
+            <span class="logo-work">Work</span><span class="logo-link">Link</span>
+          </span>
+        </a>
       </div>
-      <div class="search-bar">
+      <div class="search-bar desktop-search-bar">
         <span class="search-icon" aria-hidden="true">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
             <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
           </svg>
         </span>
-        <input type="text" placeholder="Search for products and brands" />
+        <input type="text" placeholder="Search gardeners, plumbers, therapists, programmers..." data-search-context="inline" />
       </div>
       <div class="header-actions">
+        <a href="${base}index.html#service-types">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M10 6h10M10 12h10M10 18h10"/><path d="M4 7h.01M4 12h.01M4 17h.01"/></svg>
+          Browse
+        </a>
+        <a href="${base}index.html#how-it-works" class="header-how-link">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 21c4.97 0 9-4.03 9-9s-4.03-9-9-9-9 4.03-9 9 4.03 9 9 9Z"/><path d="m9 12 2 2 4-4"/></svg>
+          How It Works
+        </a>
+        <button class="mobile-search-trigger" type="button" aria-label="Open search">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+            <circle cx="11" cy="11" r="7.5"/><path d="M20 20l-4.2-4.2"/>
+          </svg>
+        </button>
         <div class="account-menu-host ${isLoggedIn ? 'is-logged-in' : 'is-logged-out'}">
           <a href="${isLoggedIn ? `${base}pages/account.html` : '#'}" class="a-plus-btn account-trigger" data-account-trigger="a-plus">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-            A+ Account
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 5v14M5 12h14"/><rect x="3" y="3" width="18" height="18" rx="4"/></svg>
+            Create Profile
           </a>
           <a href="${isLoggedIn ? `${base}pages/account.html` : '#'}" class="account-trigger account-link" data-account-trigger="account">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            ${isLoggedIn ? accountName.split(' ')[0] : 'Account'}
+            ${isLoggedIn ? firstName : 'Account'}
           </a>
           ${isLoggedIn ? `
             <div class="account-dropdown" aria-hidden="true">
               <div class="account-dropdown-greeting">Hi, ${accountName}</div>
               <a href="${base}pages/account.html" class="account-dropdown-item">
                 <i class="fa-regular fa-user"></i>
-                <span>Profile</span>
+                <span>My Profile</span>
               </a>
-              <a href="#" class="account-dropdown-item">
-                <i class="fa-solid fa-cube"></i>
-                <span>Order History</span>
+              <a href="${base}pages/account.html" class="account-dropdown-item">
+                <i class="fa-regular fa-address-book"></i>
+                <span>Saved People</span>
               </a>
-              <a href="#" class="account-dropdown-item">
-                <i class="fa-solid fa-rectangle-list"></i>
-                <span>A+ Account</span>
+              <a href="${base}pages/account.html" class="account-dropdown-item">
+                <i class="fa-solid fa-briefcase"></i>
+                <span>Job Requests</span>
               </a>
-              <a href="#" class="account-dropdown-item">
-                <i class="fa-regular fa-book-open"></i>
-                <span>Address Book</span>
+              <a href="${base}pages/account.html" class="account-dropdown-item">
+                <i class="fa-solid fa-paper-plane"></i>
+                <span>Applications</span>
               </a>
-              <a href="#" class="account-dropdown-item">
-                <i class="fa-solid fa-tag"></i>
-                <span>Lay-by’s</span>
+              <a href="${base}pages/account.html" class="account-dropdown-item">
+                <i class="fa-regular fa-message"></i>
+                <span>Messages</span>
               </a>
-              <a href="#" class="account-dropdown-item">
-                <i class="fa-solid fa-ellipsis"></i>
-                <span>More</span>
+              <a href="${base}pages/account.html" class="account-dropdown-item">
+                <i class="fa-solid fa-sliders"></i>
+                <span>Settings</span>
               </a>
               <button type="button" class="account-dropdown-logout">Log Out</button>
             </div>
           ` : ''}
         </div>
-        <a href="${base}pages/wishlist.html">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-          Wishlist
-        </a>
-        <a href="#" class="cart-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-          <span class="cart-badge">0</span>
-          Cart
-        </a>
       </div>
     </div>
   </header>
-  <div class="mobile-search-row">
-    <div class="search-bar mobile-search-bar">
-      <span class="search-icon" aria-hidden="true">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-        </svg>
-      </span>
-      <input type="text" placeholder="Search for products and brands" />
+  <div class="mobile-nav-overlay" aria-hidden="true"></div>
+  <div class="mobile-search-overlay" id="mobile-search-overlay" hidden>
+    <div class="mobile-search-panel" aria-modal="true" role="dialog" aria-labelledby="mobile-search-title">
+      <div class="mobile-search-head">
+        <div class="search-bar mobile-search-toast-bar">
+          <span class="search-icon" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+            </svg>
+          </span>
+          <input type="text" placeholder="Search services, trades, or people" data-search-context="overlay" />
+        </div>
+        <button type="button" class="mobile-search-close" aria-label="Close search">×</button>
+      </div>
+      <div class="mobile-search-copy">
+        <h3 id="mobile-search-title">Search coming soon</h3>
+        <p>Use these sample results for now while full WorkLinkUp search is still being built.</p>
+      </div>
+      <div class="mobile-search-results" id="mobile-search-results"></div>
     </div>
   </div>
-  <div class="mobile-nav-overlay" aria-hidden="true"></div>
   <nav id="site-nav">
     <button class="mobile-nav-close" type="button" aria-label="Close menu">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.4">
@@ -113,8 +132,11 @@ function renderHeader() {
     </button>
     <div class="nav-inner">
       <div class="nav-item">
-        <a href="${base}pages/toddler-boys.html" class="nav-link">Boys</a>
-        <button class="mobile-submenu-toggle" type="button" aria-expanded="false" aria-label="Toggle Boys menu">
+        <a href="${base}index.html" class="nav-link">Home</a>
+      </div>
+      <div class="nav-item">
+        <a href="${base}index.html#service-types" class="nav-link">Home Services</a>
+        <button class="mobile-submenu-toggle" type="button" aria-expanded="false" aria-label="Toggle Home Services menu">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
             <path d="M6 9l6 6 6-6"/>
           </svg>
@@ -122,33 +144,33 @@ function renderHeader() {
         <div class="mega-dropdown">
           <div class="mega-dropdown-inner">
             <div class="mega-col">
-              <h4>Baby Boy Categories</h4>
+              <h4>Repairs & Outdoor</h4>
               <ul>
-                <li><a href="${base}pages/toddler-boys.html"><i class="fa-solid fa-baby"></i><span>Onesies and Bodysuits</span></a></li>
-                <li><a href="${base}pages/toddler-boys.html"><i class="fa-solid fa-moon"></i><span>Sleepers and Footies</span></a></li>
-                <li><a href="${base}pages/toddler-boys.html"><i class="fa-solid fa-shirt"></i><span>Rompers and Coveralls</span></a></li>
-                <li><a href="${base}pages/toddler-boys.html"><i class="fa-solid fa-icons"></i><span>Graphic Tees and Polos</span></a></li>
-                <li><a href="${base}pages/toddler-boys.html"><i class="fa-solid fa-person-walking"></i><span>Cargo Pants and Joggers</span></a></li>
-                <li><a href="${base}pages/toddler-boys.html"><i class="fa-solid fa-box-archive"></i><span>Shorts and Overalls</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-tree"></i><span>Gardener</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-wrench"></i><span>Plumber</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-bolt"></i><span>Electrician</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-hammer"></i><span>Carpenter</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-screwdriver-wrench"></i><span>Handyman</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-paint-roller"></i><span>Painter</span></a></li>
               </ul>
             </div>
             <div class="mega-col">
-              <h4>&nbsp;</h4>
+              <h4>Home Support</h4>
               <ul>
-                <li><a href="${base}pages/toddler-boys.html"><i class="fa-solid fa-people-group"></i><span>Sets and Tracksuits</span></a></li>
-                <li><a href="${base}pages/toddler-boys.html"><i class="fa-solid fa-shirt"></i><span>Cardigans and Hoodies</span></a></li>
-                <li><a href="${base}pages/toddler-boys.html"><i class="fa-solid fa-cloud-bolt"></i><span>Bunting Suits and Jackets</span></a></li>
-                <li><a href="${base}pages/toddler-boys.html"><i class="fa-solid fa-socks"></i><span>Socks and Booties</span></a></li>
-                <li><a href="${base}pages/toddler-boys.html"><i class="fa-solid fa-hat-cowboy"></i><span>Beanies and Baseball Caps</span></a></li>
-                <li><a href="${base}pages/toddler-boys.html"><i class="fa-solid fa-user-tie"></i><span>Bow Ties and Braces</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-soap"></i><span>Cleaner</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-truck-ramp-box"></i><span>Moving Help</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-faucet-drip"></i><span>Water Tank Cleaning</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-fan"></i><span>Appliance Repair</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-shield-dog"></i><span>Security & Guarding</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-boxes-packing"></i><span>General Labour</span></a></li>
               </ul>
             </div>
           </div>
         </div>
       </div>
       <div class="nav-item">
-        <a href="${base}pages/toddler-girls.html" class="nav-link">Girls</a>
-        <button class="mobile-submenu-toggle" type="button" aria-expanded="false" aria-label="Toggle Girls menu">
+        <a href="${base}index.html#service-types" class="nav-link">Beauty & Wellness</a>
+        <button class="mobile-submenu-toggle" type="button" aria-expanded="false" aria-label="Toggle Beauty and Wellness menu">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
             <path d="M6 9l6 6 6-6"/>
           </svg>
@@ -156,33 +178,33 @@ function renderHeader() {
         <div class="mega-dropdown">
           <div class="mega-dropdown-inner">
             <div class="mega-col">
-              <h4>Baby Girl Categories</h4>
+              <h4>Beauty</h4>
               <ul>
-                <li><a href="${base}pages/toddler-girls.html"><i class="fa-solid fa-baby"></i><span>Onesies and Bodysuits</span></a></li>
-                <li><a href="${base}pages/toddler-girls.html"><i class="fa-solid fa-moon"></i><span>Sleepers and Footies</span></a></li>
-                <li><a href="${base}pages/toddler-girls.html"><i class="fa-solid fa-shirt"></i><span>Rompers and Sunsuits</span></a></li>
-                <li><a href="${base}pages/toddler-girls.html"><i class="fa-solid fa-child-dress"></i><span>Dresses and Skirts</span></a></li>
-                <li><a href="${base}pages/toddler-girls.html"><i class="fa-solid fa-child-dress"></i><span>Leggings and Ruffle Pants</span></a></li>
-                <li><a href="${base}pages/toddler-girls.html"><i class="fa-solid fa-box-archive"></i><span>Bloomers and Diaper Covers</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-scissors"></i><span>Hairdresser</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Makeup Artist</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-hand-sparkles"></i><span>Nail Technician</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-user-tie"></i><span>Barber</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-spa"></i><span>Massage Therapist</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-person-running"></i><span>Fitness Coach</span></a></li>
               </ul>
             </div>
             <div class="mega-col">
-              <h4>&nbsp;</h4>
+              <h4>Wellness & Care</h4>
               <ul>
-                <li><a href="${base}pages/toddler-girls.html"><i class="fa-solid fa-ribbon"></i><span>Tunics and Blouses</span></a></li>
-                <li><a href="${base}pages/toddler-girls.html"><i class="fa-solid fa-shirt"></i><span>Sweaters and Cardigans</span></a></li>
-                <li><a href="${base}pages/toddler-girls.html"><i class="fa-solid fa-snowflake"></i><span>Coats and Pram Suits</span></a></li>
-                <li><a href="${base}pages/toddler-girls.html"><i class="fa-solid fa-socks"></i><span>Socks and Tights</span></a></li>
-                <li><a href="${base}pages/toddler-girls.html"><i class="fa-solid fa-gem"></i><span>Headbands and Soft Bows</span></a></li>
-                <li><a href="${base}pages/toddler-girls.html"><i class="fa-solid fa-hat-cowboy-side"></i><span>Sun Hats and Bonnets</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-heart-pulse"></i><span>Therapist</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-user-nurse"></i><span>Home Care Worker</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-child-reaching"></i><span>Child Care</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-user-group"></i><span>Counsellor</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-utensils"></i><span>Meal Prep</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-graduation-cap"></i><span>Tutor</span></a></li>
               </ul>
             </div>
           </div>
         </div>
       </div>
       <div class="nav-item">
-        <a href="#" class="nav-link">School</a>
-        <button class="mobile-submenu-toggle" type="button" aria-expanded="false" aria-label="Toggle School menu">
+        <a href="${base}index.html#service-types" class="nav-link">Digital & Business</a>
+        <button class="mobile-submenu-toggle" type="button" aria-expanded="false" aria-label="Toggle Digital and Business menu">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
             <path d="M6 9l6 6 6-6"/>
           </svg>
@@ -190,63 +212,38 @@ function renderHeader() {
         <div class="mega-dropdown">
           <div class="mega-dropdown-inner">
             <div class="mega-col">
-              <h4>Boys</h4>
+              <h4>Tech & Office</h4>
               <ul>
-                <li><a href="#"><i class="fa-solid fa-user-graduate"></i><span>Grey or Navy Trousers</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-shirt"></i><span>Shorts</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-shirt"></i><span>Button-Down Shirts (Short and Long Sleeve)</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-shirt"></i><span>Polo Shirts</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-shirt"></i><span>V-Neck Sweaters and Cardigans</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-user-tie"></i><span>School Blazers</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-ribbon"></i><span>Ties</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-shoe-prints"></i><span>Black or Brown Leather Shoes</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-person-running"></i><span>Athletic Trainers</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-dumbbell"></i><span>PE Shorts and Tracksuits</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-socks"></i><span>Crew Socks</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-belt"></i><span>Belts</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-laptop-code"></i><span>Programmer</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-pen-ruler"></i><span>Designer</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-camera"></i><span>Photographer</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-video"></i><span>Videographer</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-hashtag"></i><span>Social Media Manager</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-keyboard"></i><span>Virtual Assistant</span></a></li>
               </ul>
             </div>
             <div class="mega-col">
-              <h4>Girls</h4>
+              <h4>Business Support</h4>
               <ul>
-                <li><a href="#"><i class="fa-solid fa-child-dress"></i><span>Pleated Skirts and Culottes</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-child-dress"></i><span>Pinafores and Dresses</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-person-dress"></i><span>Trousers and Slacks</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-sun"></i><span>Gingham or Checkered Summer Dresses</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-shirt"></i><span>Blouses and Peter Pan Collar Shirts</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-shirt"></i><span>Polo Shirts</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-shirt"></i><span>Cardigans and Sweaters</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-user-tie"></i><span>School Blazers</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-shoe-prints"></i><span>Black or Navy Flats (Mary Janes)</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-person-running"></i><span>Athletic Trainers</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-dumbbell"></i><span>PE Skorts and Leggings</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-socks"></i><span>Tights and Knee-High Socks</span></a></li>
-              </ul>
-            </div>
-            <div class="mega-col">
-              <h4>General Supplies (Unisex)</h4>
-              <ul>
-                <li><a href="#"><i class="fa-solid fa-backpack"></i><span>Backpacks and Satchels</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-box"></i><span>Insulated Lunch Boxes</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-bottle-water"></i><span>Water Bottles</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-pencil"></i><span>Pencil Cases</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-book"></i><span>Notebooks and Exercise Books</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-pen-ruler"></i><span>Stationery Sets (Pens, Pencils, Erasers)</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-palette"></i><span>Art Smocks or Aprons</span></a></li>
-                <li><a href="#"><i class="fa-solid fa-bag-shopping"></i><span>Library Bags</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-calculator"></i><span>Bookkeeper</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-file-signature"></i><span>CV Writer</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-bullhorn"></i><span>Marketing Support</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-language"></i><span>Translation</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-print"></i><span>Printing & Branding</span></a></li>
+                <li><a href="${base}index.html#service-types"><i class="fa-solid fa-store"></i><span>Small Business Help</span></a></li>
               </ul>
             </div>
           </div>
         </div>
       </div>
       <div class="nav-item">
-        <a href="#" class="nav-link">Toys</a>
+        <a href="${base}index.html#cities" class="nav-link">Cities</a>
       </div>
       <div class="nav-item">
-        <a href="#" class="nav-link sale">Sale</a>
+        <a href="${base}index.html#for-clients" class="nav-link">For Clients</a>
       </div>
       <div class="nav-item">
-        <a href="#" class="nav-link promo">Promotions</a>
+        <a href="${base}index.html#for-workers" class="nav-link promo">For Workers</a>
       </div>
     </div>
   </nav>`;
@@ -255,82 +252,49 @@ function renderHeader() {
 function renderAccountPanel() {
   const base = getBasePath();
   const account = getStoredAccount();
-  const accountEmail = account && account.email ? account.email : 'blackgifttechlabs@gmail.com';
+  const accountEmail = account && account.email ? account.email : 'you@example.com';
   return `
   <div class="account-auth-overlay" id="account-auth-overlay" hidden>
     <aside class="account-auth-panel" aria-modal="true" role="dialog" aria-labelledby="account-auth-title">
       <button type="button" class="account-auth-close" aria-label="Close account panel">×</button>
-      <h2 id="account-auth-title">Log In/Register</h2>
-      <div class="account-auth-hero">
-        <img src="${base}images/mobilegirls.jpg" alt="SoftGiggles sign in" />
-      </div>
       <div class="account-auth-copy">
-        <h3 class="account-auth-heading">Welcome</h3>
-        <p class="account-auth-subtext">Create an account or sign in to continue.</p>
+        <h2 id="account-auth-title" class="account-auth-heading">Welcome</h2>
+        <p class="account-auth-subtext">Create an account or sign in to continue with WorkLinkUp.</p>
       </div>
       <div class="account-auth-methods">
-        <section class="account-auth-method-card account-method-google">
-          <div class="account-method-label">Fast sign in</div>
-          <button type="button" class="account-auth-btn account-google-btn">
-            <span class="google-mark" aria-hidden="true"><span class="google-g">G</span></span>
-            <span>Continue with Google</span>
-          </button>
-        </section>
-        <section class="account-auth-method-card account-method-phone">
-          <div class="account-method-label">Phone verification</div>
-          <button type="button" class="account-auth-btn account-phone-toggle">
-            <i class="fa-solid fa-mobile-screen-button"></i>
-            <span>Use phone number</span>
-          </button>
-          <div class="account-phone-form-wrap">
-            <form class="account-phone-form" id="account-phone-form">
-              <button type="button" class="account-change-method">Change login method</button>
-              <div class="account-form-row">
-                <label for="account-phone">Phone number</label>
-                <input id="account-phone" name="phone" type="tel" placeholder="+263 77 123 4567" />
-              </div>
-              <button type="button" class="account-submit-btn account-phone-submit" id="account-phone-submit">Send verification code</button>
-              <div class="account-form-row account-code-row" hidden>
-                <label for="account-phone-code">Verification code</label>
-                <input id="account-phone-code" name="code" type="text" inputmode="numeric" placeholder="123456" />
-              </div>
-              <button type="button" class="account-submit-btn account-phone-verify" hidden>Verify code</button>
-              <p class="account-auth-hint">Firebase will send an SMS code after the reCAPTCHA check.</p>
-              <div id="account-recaptcha-container"></div>
-            </form>
-          </div>
-        </section>
-        <div class="account-method-divider"><span>or use email</span></div>
         <section class="account-auth-method-card account-method-email">
-          <div class="account-method-label">Email and password</div>
-          <button type="button" class="account-auth-btn account-email-toggle">
-            <i class="fa-regular fa-envelope"></i>
-            <span>Use Email</span>
-          </button>
-          <div class="account-email-form-wrap">
+          <div class="account-method-label">Sign In Options</div>
+          <div class="account-email-form-wrap is-open">
             <form class="account-email-form" id="account-email-form">
-              <button type="button" class="account-change-method">Change login method</button>
               <div class="account-form-row account-name-row" hidden>
                 <label for="account-name">Full name</label>
-                <input id="account-name" name="name" type="text" placeholder="Black Gift" />
+                <input id="account-name" name="name" type="text" placeholder="Tinashe Moyo" />
               </div>
               <div class="account-form-row">
                 <label for="account-email">Email address</label>
-                <input id="account-email" name="email" type="email" placeholder="hello@softgiggles.com" required />
+                <input id="account-email" name="email" type="email" placeholder="you@example.com" required />
               </div>
               <div class="account-form-row">
                 <label for="account-password">Password</label>
                 <input id="account-password" name="password" type="password" placeholder="Enter password" required />
               </div>
-              <button type="submit" class="account-submit-btn">Sign In</button>
+              <button type="submit" class="account-submit-btn account-submit-signin">
+                <span class="account-btn-label">Sign In</span>
+              </button>
             </form>
           </div>
         </section>
       </div>
-      <p class="account-auth-switch-copy">
-        <span class="account-switch-label">New here?</span>
-        <button type="button" class="account-mode-switch">Sign up</button>
-      </p>
+      <div class="account-auth-secondary">
+        <button type="button" class="account-auth-btn account-google-btn">
+          <span class="google-mark" aria-hidden="true"><span class="google-g">G</span></span>
+          <span class="account-btn-label">Sign in with Google</span>
+        </button>
+        <div class="account-auth-switch-copy account-inline-actions">
+          <button type="button" class="account-mode-switch">Sign up</button>
+          <button type="button" class="account-forgot-password">Forgot password</button>
+        </div>
+      </div>
       <p class="account-auth-note">By continuing, you agree to our Terms and Privacy Policy.</p>
       <input type="hidden" id="account-mode" value="signin" />
       <input type="hidden" id="account-stored-email" value="${accountEmail}" />
@@ -350,71 +314,69 @@ function renderFooter() {
   <footer>
     <div class="footer-inner">
       <div class="footer-col">
-        <h4>Account</h4>
+        <h4>For Clients</h4>
         <ul>
-          <li><a href="${base}pages/account.html">My Profile</a></li>
-          <li><a href="${base}pages/wishlist.html">Wishlist</a></li>
-          <li><a href="#">Order History</a></li>
+          <li><a href="${base}index.html#for-clients">Find someone for a job</a></li>
+          <li><a href="${base}index.html#service-types">Browse service types</a></li>
+          <li><a href="${base}index.html#how-it-works">See how hiring works</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Things We Offer</h4>
+        <h4>For Workers</h4>
         <ul>
-          <li><a href="#">Warm baby essentials</a></li>
-          <li><a href="#">School-ready outfits</a></li>
-          <li><a href="#">Shoes and accessories</a></li>
-          <li><a href="#">Toys and gifting picks</a></li>
-          <li><a href="#">Seasonal sale deals</a></li>
+          <li><a href="${base}pages/account.html">Create your profile</a></li>
+          <li><a href="${base}index.html#for-workers">Show your services</a></li>
+          <li><a href="${base}index.html#launch-roadmap">Follow new features</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Customer Services</h4>
+        <h4>Popular Work</h4>
         <ul>
-          <li><a href="#">Delivery Details</a></li>
-          <li><a href="#">Store Locator</a></li>
-          <li><a href="#">Need Help?</a></li>
-          <li><a href="#">Contact Us</a></li>
-          <li><a href="#">Bulk Orders</a></li>
+          <li><a href="${base}index.html#service-types">Gardening</a></li>
+          <li><a href="${base}index.html#service-types">Plumbing</a></li>
+          <li><a href="${base}index.html#service-types">Hair & Nails</a></li>
+          <li><a href="${base}index.html#service-types">Therapy & Wellness</a></li>
+          <li><a href="${base}index.html#service-types">Programming & Design</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>About SoftGiggles</h4>
+        <h4>Zimbabwe Focus</h4>
         <ul>
-          <li><a href="#">About Us</a></li>
-          <li><a href="#">Careers</a></li>
-          <li><a href="#">Blog</a></li>
-          <li><a href="#">Community</a></li>
-          <li><a href="#">Sitemap</a></li>
+          <li><a href="${base}index.html#cities">Harare</a></li>
+          <li><a href="${base}index.html#cities">Bulawayo</a></li>
+          <li><a href="${base}index.html#cities">Mutare</a></li>
+          <li><a href="${base}index.html#cities">Gweru</a></li>
+          <li><a href="${base}index.html#cities">Chitungwiza</a></li>
         </ul>
       </div>
       <div class="newsletter-col">
-        <h4>Stay in the Loop</h4>
-        <p>Join us today and get 10% off your first order.</p>
+        <h4>Follow the Build</h4>
+        <p>WorkLinkUp starts with profiles and discovery. Reviews, bookings, and safer payments can be added as the platform grows.</p>
         <div class="email-form">
           <input type="email" placeholder="Enter email address" />
           <button>→</button>
         </div>
-        <p style="font-size:12px;color:#666;margin-top:10px;">By subscribing you agree to our <a href="#" style="color:var(--green);">Privacy Policy</a>.</p>
+        <p style="font-size:12px;color:rgba(232,226,219,0.74);margin-top:10px;">Launch updates only. By subscribing you agree to our <a href="#" style="color:var(--brand-gold);">Privacy Policy</a>.</p>
       </div>
     </div>
-    <div class="payment-logos" style="max-width:1400px;margin:0 auto;padding:20px 0;display:flex;gap:12px;flex-wrap:wrap;align-items:center;border-top:1px solid #333;">
-      <span class="payment-logo"><img src="${base}images/logo/Ecocash-Logo.png" alt="EcoCash" /></span>
-      <span class="payment-logo"><img src="${base}images/logo/Mastercard-Zimswitch.jpg" alt="Mastercard Zimswitch" /></span>
-      <span class="payment-logo"><img src="${base}images/logo/logo-black.png" alt="Payment logo" /></span>
+    <div class="work-footer-highlights">
+      <span class="work-footer-highlight"><i class="fa-solid fa-location-dot"></i> Built for Zimbabwe</span>
+      <span class="work-footer-highlight"><i class="fa-solid fa-user-check"></i> Local worker profiles</span>
+      <span class="work-footer-highlight"><i class="fa-solid fa-briefcase"></i> Everyday jobs and skilled services</span>
     </div>
     <div class="footer-bottom">
       <div class="footer-links">
         <a href="#">Terms &amp; Conditions</a>
         <a href="#">Privacy Policy</a>
         <a href="#">Cookie Policy</a>
-        <a href="#">Access to Information</a>
+        <a href="#">Community Guidelines</a>
       </div>
       <div class="social-area">
         <div class="social-links">
           <a href="#" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
           <a href="#" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
           <a href="#" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
-          <a href="#" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
         </div>
       </div>
     </div>
@@ -425,13 +387,43 @@ function renderCookieBanner() {
   return `
   <div class="cookie-banner" id="cookie-banner" hidden>
     <p>
-      We use cookies to improve your online experience. If you continue to use our site, you are agreeing to our
+      We use cookies to improve the WorkLinkUp experience. If you continue to use our site, you are agreeing to our
       <a href="#" class="cookie-link">Cookie Policy</a>.
     </p>
     <div class="cookie-actions">
       <button type="button" class="cookie-btn cookie-accept">OK</button>
       <button type="button" class="cookie-btn cookie-decline">Decline</button>
     </div>
+  </div>`;
+}
+
+function renderCartDrawer() {
+  const base = getBasePath();
+  return `
+  <div class="cart-drawer-overlay" id="cart-drawer-overlay" hidden>
+    <aside class="cart-drawer" aria-modal="true" role="dialog" aria-labelledby="cart-drawer-title">
+      <div class="cart-drawer-header">
+        <h2 id="cart-drawer-title">Shopping Cart</h2>
+        <button type="button" class="cart-drawer-close" aria-label="Close cart">×</button>
+      </div>
+      <div class="cart-drawer-progress">
+        <div class="cart-progress-track">
+          <span class="cart-progress-fill"></span>
+        </div>
+        <p class="cart-progress-copy">Spend R 460.05 more and receive free delivery.</p>
+      </div>
+      <div class="cart-drawer-body" data-cart-drawer-items></div>
+      <div class="cart-drawer-footer">
+        <div class="cart-drawer-subtotal">
+          <span>Subtotal</span>
+          <strong data-cart-subtotal>R 0.00</strong>
+        </div>
+        <div class="cart-drawer-actions">
+          <a href="${base}pages/cart.html" class="cart-drawer-view-btn">View cart</a>
+          <a href="${base}pages/checkout.html" class="cart-drawer-checkout-btn">Checkout</a>
+        </div>
+      </div>
+    </aside>
   </div>`;
 }
 
@@ -445,6 +437,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   if (!document.getElementById('account-auth-overlay')) {
     document.body.insertAdjacentHTML('beforeend', renderAccountPanel());
+  }
+  if (!document.getElementById('cart-drawer-overlay')) {
+    document.body.insertAdjacentHTML('beforeend', renderCartDrawer());
   }
   if (!document.getElementById('firebase-auth-script')) {
     const moduleScript = document.createElement('script');
@@ -460,6 +455,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeToggle = headerEl.querySelector('.mobile-nav-close');
   const navEl = headerEl.querySelector('#site-nav');
   const overlayEl = headerEl.querySelector('.mobile-nav-overlay');
+  const mobileSearchOverlay = headerEl.querySelector('#mobile-search-overlay');
+  const mobileSearchTrigger = headerEl.querySelector('.mobile-search-trigger');
+  const mobileSearchClose = headerEl.querySelector('.mobile-search-close');
+  const mobileSearchInput = headerEl.querySelector('.mobile-search-toast-bar input');
   const submenuToggles = headerEl.querySelectorAll('.mobile-submenu-toggle');
   const accountMenuHost = headerEl.querySelector('.account-menu-host');
   const accountTriggers = headerEl.querySelectorAll('.account-trigger');
@@ -478,6 +477,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function syncMobileNav() {
     if (!mobileQuery.matches) {
       setMobileMenuState(false);
+      if (mobileSearchOverlay) mobileSearchOverlay.hidden = true;
       headerEl.querySelectorAll('.nav-item.mobile-submenu-open').forEach((item) => {
         item.classList.remove('mobile-submenu-open');
       });
@@ -514,6 +514,36 @@ document.addEventListener('DOMContentLoaded', () => {
   if (overlayEl) {
     overlayEl.addEventListener('click', () => {
       setMobileMenuState(false);
+    });
+  }
+
+  if (mobileSearchTrigger && mobileSearchOverlay) {
+    mobileSearchTrigger.addEventListener('click', () => {
+      mobileSearchOverlay.hidden = false;
+      requestAnimationFrame(() => {
+        mobileSearchOverlay.classList.add('is-visible');
+        if (mobileSearchInput) mobileSearchInput.focus();
+      });
+    });
+  }
+
+  if (mobileSearchClose && mobileSearchOverlay) {
+    mobileSearchClose.addEventListener('click', () => {
+      mobileSearchOverlay.classList.remove('is-visible');
+      window.setTimeout(() => {
+        mobileSearchOverlay.hidden = true;
+      }, 180);
+    });
+  }
+
+  if (mobileSearchOverlay) {
+    mobileSearchOverlay.addEventListener('click', (event) => {
+      if (event.target === mobileSearchOverlay) {
+        mobileSearchOverlay.classList.remove('is-visible');
+        window.setTimeout(() => {
+          mobileSearchOverlay.hidden = true;
+        }, 180);
+      }
     });
   }
 
@@ -594,9 +624,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (dropdownLogoutBtn) {
-    dropdownLogoutBtn.addEventListener('click', () => {
+    dropdownLogoutBtn.addEventListener('click', async () => {
       if (window.softGigglesAuth && typeof window.softGigglesAuth.signOut === 'function') {
-        window.softGigglesAuth.signOut();
+        try {
+          await window.softGigglesAuth.signOut();
+        } catch (error) {
+          // Fall back to local sign-out handling below.
+        }
+        window.location.reload();
         return;
       }
       try {

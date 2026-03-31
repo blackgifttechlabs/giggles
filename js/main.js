@@ -1,58 +1,54 @@
 // Nav mega dropdown hover logic
 document.addEventListener('DOMContentLoaded', () => {
   const SEARCH_ITEMS = [
-    'Onesies and Bodysuits',
-    'Sleepers and Footies',
-    'Rompers and Coveralls',
-    'Graphic Tees and Polos',
-    'Cargo Pants and Joggers',
-    'Shorts and Overalls',
-    'Sets and Tracksuits',
-    'Cardigans and Hoodies',
-    'Bunting Suits and Jackets',
-    'Socks and Booties',
-    'Beanies and Baseball Caps',
-    'Bow Ties and Braces',
-    'Rompers and Sunsuits',
-    'Dresses and Skirts',
-    'Leggings and Ruffle Pants',
-    'Bloomers and Diaper Covers',
-    'Tunics and Blouses',
-    'Sweaters and Cardigans',
-    'Coats and Pram Suits',
-    'Socks and Tights',
-    'Headbands and Soft Bows',
-    'Sun Hats and Bonnets',
-    'Grey or Navy Trousers',
-    'Button-Down Shirts',
-    'Polo Shirts',
-    'School Blazers',
-    'Backpacks and Satchels',
-    'Insulated Lunch Boxes',
-    'Water Bottles',
-    'Pencil Cases',
-    'Fleece Babygrow Yellow',
-    'Fleece Babygrow Natural',
-    'Fleece Babygrow Light Pink',
-    'Babygrow Grey',
-    'Babygrow Natural',
-    'Tiny winter dress',
-    'Tiny winter shoes',
-    'Tiny warm winter hat',
-    'Toddler Girls',
-    'Toddler Boys',
-    'Girls Jackets',
-    'Girls Shoes',
-    'Boys Jackets',
-    'Boys Shoes',
-    'Fleece Tops',
-    'Jackets',
-    'Shop Dresses',
-    'Shop Shoes',
-    'Shop Hats',
-    'Toys',
-    'Sale',
-    'Promotions'
+    {
+      value: 'Plumber in Harare',
+      title: 'Plumber in Harare',
+      subtitle: 'Home Services • Water leaks, blocked drains, fittings',
+      icon: 'fa-solid fa-wrench'
+    },
+    {
+      value: 'Gardener in Borrowdale',
+      title: 'Gardener in Borrowdale',
+      subtitle: 'Home Services • Lawn care, hedges, garden clean-ups',
+      icon: 'fa-solid fa-seedling'
+    },
+    {
+      value: 'Nail technician in Bulawayo',
+      title: 'Nail technician in Bulawayo',
+      subtitle: 'Beauty & Wellness • Acrylics, gel polish, manicures',
+      icon: 'fa-solid fa-hand-sparkles'
+    },
+    {
+      value: 'Tutor for Maths',
+      title: 'Tutor for Maths',
+      subtitle: 'Learning Support • Primary, O-Level, A-Level',
+      icon: 'fa-solid fa-graduation-cap'
+    },
+    {
+      value: 'Programmer for websites',
+      title: 'Programmer for websites',
+      subtitle: 'Digital & Business • Websites, landing pages, support',
+      icon: 'fa-solid fa-laptop-code'
+    },
+    {
+      value: 'Photographer for events',
+      title: 'Photographer for events',
+      subtitle: 'Creative Services • Weddings, birthdays, brand shoots',
+      icon: 'fa-solid fa-camera'
+    },
+    {
+      value: 'Cleaner in Avondale',
+      title: 'Cleaner in Avondale',
+      subtitle: 'Home Support • Weekly visits, deep cleaning, ironing',
+      icon: 'fa-solid fa-soap'
+    },
+    {
+      value: 'Social media manager',
+      title: 'Social media manager',
+      subtitle: 'Business Support • Content calendars, posting, ads',
+      icon: 'fa-solid fa-hashtag'
+    }
   ];
 
   const cookieBanner = document.getElementById('cookie-banner');
@@ -102,22 +98,11 @@ document.addEventListener('DOMContentLoaded', () => {
     cookieDecline.addEventListener('click', () => saveCookieChoice('declined'));
   }
 
-  let searchModal = document.getElementById('search-coming-modal');
+  let searchModal = document.getElementById('mobile-search-overlay');
   let searchSuggestions = document.getElementById('search-suggestions');
+  let searchModalInput = searchModal ? searchModal.querySelector('input[data-search-context="overlay"]') : null;
+  let searchModalResults = document.getElementById('mobile-search-results');
   let activeSearchInput = null;
-
-  if (!searchModal) {
-    document.body.insertAdjacentHTML('beforeend', `
-      <div class="search-coming-overlay" id="search-coming-modal" hidden>
-        <div class="search-coming-dialog">
-          <button type="button" class="search-coming-close" aria-label="Close search modal">×</button>
-          <h3>Search coming soon</h3>
-          <p>We are still building search. Suggestions are available, but full search will be live soon.</p>
-        </div>
-      </div>
-    `);
-    searchModal = document.getElementById('search-coming-modal');
-  }
 
   if (!searchSuggestions) {
     document.body.insertAdjacentHTML('beforeend', `<div class="search-suggestions" id="search-suggestions" hidden></div>`);
@@ -131,10 +116,44 @@ document.addEventListener('DOMContentLoaded', () => {
     activeSearchInput = null;
   }
 
-  function openSearchModal() {
+  function getSearchMatches(rawQuery) {
+    const query = String(rawQuery || '').trim().toLowerCase();
+    const matches = SEARCH_ITEMS.filter((item) => {
+      const haystack = `${item.title} ${item.subtitle}`.toLowerCase();
+      return !query || haystack.includes(query);
+    });
+    return matches.slice(0, query ? 6 : 8);
+  }
+
+  function buildSearchItemMarkup(item, query, className) {
+    return `
+      <button type="button" class="${className}" data-value="${escapeHtml(item.value)}">
+        <span class="search-result-icon" aria-hidden="true"><i class="${item.icon}"></i></span>
+        <span class="search-result-copy">
+          <strong>${highlightMatch(item.title, query)}</strong>
+          <small>${highlightMatch(item.subtitle, query)}</small>
+        </span>
+      </button>
+    `;
+  }
+
+  function renderSearchModalResults(query = '') {
+    if (!searchModalResults) return;
+    const matches = getSearchMatches(query);
+    searchModalResults.innerHTML = matches.length
+      ? matches.map((item) => buildSearchItemMarkup(item, query, 'mobile-search-result')).join('')
+      : `<div class="mobile-search-empty">No sample results found. Search is coming soon.</div>`;
+  }
+
+  function openSearchModal(prefill = '') {
     if (!searchModal) return;
     searchModal.hidden = false;
-    requestAnimationFrame(() => searchModal.classList.add('is-visible'));
+    if (searchModalInput) searchModalInput.value = prefill;
+    renderSearchModalResults(prefill);
+    requestAnimationFrame(() => {
+      searchModal.classList.add('is-visible');
+      if (searchModalInput) searchModalInput.focus();
+    });
   }
 
   function closeSearchModal() {
@@ -183,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!searchSuggestions) return;
     const rawQuery = input.value.trim();
     const query = rawQuery.toLowerCase();
-    const matches = SEARCH_ITEMS.filter(item => item.toLowerCase().includes(query)).slice(0, 8);
+    const matches = getSearchMatches(rawQuery);
 
     if (!query) {
       searchSuggestions.innerHTML = '';
@@ -195,12 +214,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!matches.length) {
       searchSuggestions.innerHTML = `<button type="button" class="search-suggestion is-empty">No suggestions found</button>`;
     } else {
-      searchSuggestions.innerHTML = matches.map(item => `
-        <button type="button" class="search-suggestion" data-value="${item}">
-          <span class="search-suggestion-icon">⌕</span>
-          <span>${highlightMatch(item, rawQuery)}</span>
-        </button>
-      `).join('');
+      searchSuggestions.innerHTML = matches
+        .map((item) => buildSearchItemMarkup(item, rawQuery, 'search-suggestion'))
+        .join('');
     }
 
     positionSearchSuggestions(input);
@@ -214,19 +230,33 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.querySelectorAll('.search-bar input').forEach(input => {
+    const context = input.dataset.searchContext || 'inline';
+
     input.addEventListener('focus', () => {
+      if (context === 'overlay') {
+        renderSearchModalResults(input.value.trim());
+        return;
+      }
       if (input.value.trim()) renderSearchSuggestions(input);
     });
 
     input.addEventListener('input', () => {
+      if (context === 'overlay') {
+        renderSearchModalResults(input.value.trim());
+        return;
+      }
       renderSearchSuggestions(input);
     });
 
     input.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
         event.preventDefault();
-        hideSearchSuggestions();
-        openSearchModal();
+        if (context !== 'overlay') hideSearchSuggestions();
+        openSearchModal(input.value.trim());
+      }
+
+      if (event.key === 'Escape' && context === 'overlay') {
+        closeSearchModal();
       }
     });
   });
@@ -239,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const value = button.getAttribute('data-value') || '';
       if (activeSearchInput) activeSearchInput.value = value;
       hideSearchSuggestions();
-      openSearchModal();
+      openSearchModal(value);
     });
   }
 
@@ -247,8 +277,16 @@ document.addEventListener('DOMContentLoaded', () => {
     searchModal.addEventListener('click', (event) => {
       const target = event.target;
       if (!(target instanceof HTMLElement)) return;
-      if (target === searchModal || target.closest('.search-coming-close')) {
+      if (target === searchModal || target.closest('.mobile-search-close')) {
         closeSearchModal();
+        return;
+      }
+
+      const result = target.closest('.mobile-search-result');
+      if (result instanceof HTMLElement && searchModalInput) {
+        const value = result.getAttribute('data-value') || '';
+        searchModalInput.value = value;
+        renderSearchModalResults(value);
       }
     });
   }
@@ -270,6 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!(target instanceof Node)) return;
     if (searchSuggestions && searchSuggestions.contains(target)) return;
     if (target instanceof HTMLElement && target.closest('.search-bar')) return;
+    if (target instanceof HTMLElement && target.closest('.mobile-search-panel')) return;
     hideSearchSuggestions();
   });
 
@@ -412,8 +451,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const accountPhoneVerify = document.querySelector('.account-phone-verify');
   const accountEmailFormWrap = document.querySelector('.account-email-form-wrap');
   const accountEmailForm = document.getElementById('account-email-form');
+  const accountEmailInput = document.getElementById('account-email');
   const accountNameInput = document.getElementById('account-name');
   const accountModeSwitch = document.querySelector('.account-mode-switch');
+  const accountForgotPasswordBtn = document.querySelector('.account-forgot-password');
   const accountChangeMethodBtns = document.querySelectorAll('.account-change-method');
   const accountModeInput = document.getElementById('account-mode');
   const accountSuccessToast = document.getElementById('account-success-toast');
@@ -421,6 +462,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const accountSubtext = document.querySelector('.account-auth-subtext');
   const accountSwitchLabel = document.querySelector('.account-switch-label');
   const accountSubmitBtn = document.querySelector('.account-email-form .account-submit-btn');
+  const accountSubmitBtnLabel = document.querySelector('.account-email-form .account-btn-label');
   const accountNameRow = document.querySelector('.account-name-row');
   const accountDashboard = document.getElementById('account-dashboard');
   const accountGuestCard = document.getElementById('account-guest-card');
@@ -510,26 +552,38 @@ document.addEventListener('DOMContentLoaded', () => {
   function setButtonLoading(button, isLoading) {
     if (!button) return;
     button.classList.toggle('is-loading', isLoading);
+    button.classList.toggle('has-jimu-loader', isLoading && button.classList.contains('account-submit-btn'));
     button.disabled = isLoading;
+
+    if (!button.classList.contains('account-submit-btn')) return;
+
+    const loader = button.querySelector('.loader');
+    if (isLoading && !loader) {
+      button.insertAdjacentHTML('beforeend', `
+        <div class="loader" aria-hidden="true">
+          <div class="justify-content-center jimu-primary-loading"></div>
+        </div>
+      `);
+    }
+
+    if (!isLoading && loader) {
+      loader.remove();
+    }
   }
 
   function syncAccountMode(mode) {
     if (!accountModeInput) return;
     accountModeInput.value = mode;
     const isSignup = mode === 'signup';
-    if (accountHeading) accountHeading.textContent = isSignup ? 'Create Account' : 'Welcome';
-    if (accountSubtext) {
-      accountSubtext.textContent = isSignup
-        ? 'Set up your SoftGiggles account to save your favourites and shop faster.'
-        : 'Create an account or sign in to continue.';
-    }
-    if (accountSwitchLabel) accountSwitchLabel.textContent = isSignup ? 'Already have an account?' : 'New here?';
+    if (accountHeading) accountHeading.textContent = 'Welcome';
+    if (accountSubtext) accountSubtext.textContent = 'Create an account or sign in to continue with WorkLinkUp.';
+    if (accountSwitchLabel) accountSwitchLabel.textContent = isSignup ? 'Already have an account?' : 'Need an account?';
     if (accountModeSwitch) accountModeSwitch.textContent = isSignup ? 'Sign in' : 'Sign up';
     if (accountSubmitBtn) {
-      accountSubmitBtn.textContent = isSignup ? 'Create Account' : 'Sign In';
       accountSubmitBtn.classList.toggle('account-submit-signup', isSignup);
       accountSubmitBtn.classList.toggle('account-submit-signin', !isSignup);
     }
+    if (accountSubmitBtnLabel) accountSubmitBtnLabel.textContent = isSignup ? 'Create Account' : 'Sign In';
     if (accountNameRow) {
       accountNameRow.hidden = !isSignup;
       accountNameRow.style.display = isSignup ? '' : 'none';
@@ -549,8 +603,8 @@ document.addEventListener('DOMContentLoaded', () => {
     accountGuestCard.hidden = isLoggedIn;
     if (!isLoggedIn) return;
 
-    const name = account.name || 'Black Gift';
-    const email = account.email || 'blackgifttechlabs@gmail.com';
+    const name = account.name || 'WorkLinkUp User';
+    const email = account.email || 'you@example.com';
     if (accountDisplayName) accountDisplayName.textContent = name;
     if (accountProfileName) accountProfileName.textContent = name;
     if (accountProfileEmail) accountProfileEmail.textContent = email;
@@ -603,6 +657,15 @@ document.addEventListener('DOMContentLoaded', () => {
     window.alert('Please sign in first.');
   }
 
+  const cartStorageKey = 'softgiggles_cart';
+  const wishlistStorageKey = 'softgiggles_wishlist';
+  const freeDeliveryThreshold = 600;
+
+  function getSiteBasePath() {
+    if (typeof getBasePath === 'function') return getBasePath();
+    return window.location.pathname.includes('/pages/') ? '../' : '';
+  }
+
   function slugifyProductId(value) {
     return String(value || '')
       .toLowerCase()
@@ -611,32 +674,306 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/^-+|-+$/g, '');
   }
 
+  function readCollection(key) {
+    try {
+      const raw = localStorage.getItem(key);
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function writeCollection(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+      // Ignore storage issues and keep the interface usable.
+    }
+  }
+
+  function readCart() {
+    return readCollection(cartStorageKey);
+  }
+
+  function writeCart(items) {
+    writeCollection(cartStorageKey, items);
+  }
+
+  function readWishlist() {
+    return readCollection(wishlistStorageKey);
+  }
+
+  function writeWishlist(items) {
+    writeCollection(wishlistStorageKey, items);
+  }
+
+  function parsePrice(priceText) {
+    const text = String(priceText || '').trim();
+    const numeric = Number.parseFloat(text.replace(/[^0-9.]+/g, '')) || 0;
+    const currencySymbol = text.includes('$') ? '$' : 'R';
+    return { amount: numeric, currencySymbol };
+  }
+
+  function formatMoney(amount, currencySymbol = 'R') {
+    return `${currencySymbol} ${Number(amount || 0).toFixed(2)}`;
+  }
+
+  function inferColour(name) {
+    const colours = [
+      'yellow', 'natural', 'pink', 'grey', 'gray', 'brown', 'burgundy', 'blue',
+      'green', 'olive', 'charcoal', 'tan', 'teal', 'black', 'white', 'red'
+    ];
+    const lowerName = String(name || '').toLowerCase();
+    const match = colours.find((colour) => lowerName.includes(colour));
+    if (!match) return 'ASSORTED';
+    return match === 'gray' ? 'GREY' : match.toUpperCase();
+  }
+
+  function syncCartBadge(count = readCart().reduce((total, item) => total + Number(item.quantity || 0), 0)) {
+    document.querySelectorAll('.cart-badge').forEach((badge) => {
+      badge.textContent = String(count);
+    });
+  }
+
+  function getCartSummary(items = readCart()) {
+    const cartItems = Array.isArray(items) ? items : [];
+    const subtotal = cartItems.reduce((total, item) => total + (Number(item.amount) * Number(item.quantity || 0)), 0);
+    const currencySymbol = cartItems[0]?.currencySymbol || 'R';
+    const quantity = cartItems.reduce((total, item) => total + Number(item.quantity || 0), 0);
+    return { items: cartItems, subtotal, currencySymbol, quantity };
+  }
+
+  function buildCartItemMarkup(item, context = 'drawer') {
+    const controlsClass = context === 'page' ? 'cart-line-controls is-page' : 'cart-line-controls';
+    return `
+      <article class="cart-line-item" data-cart-item-id="${item.id}">
+        <div class="cart-line-media">
+          <img src="${item.image}" alt="${item.name}" />
+        </div>
+        <div class="cart-line-content">
+          <div class="cart-line-head">
+            <div>
+              <h3>${item.name}</h3>
+              <p>Colour: ${item.colour}</p>
+              <p>Size: ${item.size}</p>
+            </div>
+            <button type="button" class="cart-line-remove" data-cart-remove="${item.id}">Remove</button>
+          </div>
+          <div class="${controlsClass}">
+            <div class="cart-qty-control">
+              <button type="button" aria-label="Decrease quantity" data-cart-qty="${item.id}" data-cart-change="-1">−</button>
+              <span>${item.quantity}</span>
+              <button type="button" aria-label="Increase quantity" data-cart-qty="${item.id}" data-cart-change="1">+</button>
+            </div>
+            <strong>${formatMoney(item.amount * item.quantity, item.currencySymbol)}</strong>
+          </div>
+        </div>
+      </article>
+    `;
+  }
+
+  function renderCartDrawer() {
+    const drawerItemsHost = document.querySelector('[data-cart-drawer-items]');
+    const subtotalLabel = document.querySelector('[data-cart-subtotal]');
+    const progressCopy = document.querySelector('.cart-progress-copy');
+    const progressFill = document.querySelector('.cart-progress-fill');
+    if (!drawerItemsHost || !subtotalLabel || !progressCopy || !progressFill) return;
+
+    const { items, subtotal, currencySymbol } = getCartSummary();
+    subtotalLabel.textContent = formatMoney(subtotal, currencySymbol);
+
+    const progressRatio = Math.min(subtotal / freeDeliveryThreshold, 1);
+    progressFill.style.width = `${progressRatio * 100}%`;
+    const amountRemaining = Math.max(freeDeliveryThreshold - subtotal, 0);
+    progressCopy.textContent = amountRemaining > 0
+      ? `Spend ${formatMoney(amountRemaining, currencySymbol)} more and receive free delivery.`
+      : 'You have qualified for free delivery.';
+
+    drawerItemsHost.innerHTML = items.length
+      ? items.map((item) => buildCartItemMarkup(item, 'drawer')).join('')
+      : `
+        <div class="cart-empty-state">
+          <div class="cart-empty-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+          <h3>Your cart is empty</h3>
+          <p>Add a few baby essentials and they will appear here.</p>
+        </div>
+      `;
+  }
+
+  function renderWishlistButtons() {
+    const wishlist = readWishlist();
+    const wishlistIds = new Set(wishlist.map((item) => item.id));
+    document.querySelectorAll('.product-card').forEach((card) => {
+      const product = getProductFromCard(card);
+      const button = card.querySelector('.wishlist-btn');
+      if (!button) return;
+      const isSaved = wishlistIds.has(product.id);
+      button.innerHTML = isSaved ? '<i class="fa-solid fa-heart"></i>' : '<i class="fa-regular fa-heart"></i>';
+      button.classList.toggle('is-active', isSaved);
+      button.setAttribute('aria-label', isSaved ? 'Remove from wishlist' : 'Add to wishlist');
+    });
+  }
+
+  function renderWishlistPage() {
+    const emptyState = document.querySelector('[data-wishlist-empty]');
+    const listSection = document.querySelector('[data-wishlist-list]');
+    const listHost = document.querySelector('[data-wishlist-items]');
+    if (!emptyState || !listSection || !listHost) return;
+
+    const base = getSiteBasePath();
+    const wishlist = readWishlist();
+    emptyState.hidden = wishlist.length > 0;
+    listSection.hidden = wishlist.length === 0;
+
+    listHost.innerHTML = wishlist.map((item) => `
+      <article class="wishlist-product-card" data-wishlist-item-id="${item.id}">
+        <a href="${base}pages/cart.html" class="wishlist-product-image">
+          <img src="${item.image}" alt="${item.name}" />
+        </a>
+        <div class="wishlist-product-copy">
+          <h3>${item.name}</h3>
+          <p>Colour: ${item.colour}</p>
+          <p>Size: ${item.size}</p>
+          <strong>${formatMoney(item.amount, item.currencySymbol)}</strong>
+          <div class="wishlist-product-actions">
+            <button type="button" class="wishlist-action-btn" data-wishlist-add-cart="${item.id}">Add to cart</button>
+            <button type="button" class="wishlist-secondary-btn" data-wishlist-remove="${item.id}">Remove</button>
+          </div>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  function renderCartPage() {
+    const itemsHost = document.querySelector('[data-cart-page-items]');
+    const summaryHost = document.querySelector('[data-cart-page-summary]');
+    if (!itemsHost || !summaryHost) return;
+
+    const { items, subtotal, currencySymbol, quantity } = getCartSummary();
+    const amountRemaining = Math.max(freeDeliveryThreshold - subtotal, 0);
+    const progressRatio = Math.min(subtotal / freeDeliveryThreshold, 1);
+
+    itemsHost.innerHTML = items.length
+      ? items.map((item) => buildCartItemMarkup(item, 'page')).join('')
+      : `
+        <div class="cart-page-empty">
+          <h2>Your shopping cart is empty</h2>
+          <p>Add products from the catalogue to continue shopping.</p>
+          <a href="${getSiteBasePath()}index.html" class="cart-page-continue">Continue shopping</a>
+        </div>
+      `;
+
+    summaryHost.innerHTML = `
+      <section class="cart-summary-card">
+        <div class="cart-drawer-progress cart-page-progress">
+          <div class="cart-progress-track">
+            <span class="cart-progress-fill" style="width:${progressRatio * 100}%"></span>
+          </div>
+          <p class="cart-progress-copy">${amountRemaining > 0 ? `Spend ${formatMoney(amountRemaining, currencySymbol)} more and receive free delivery.` : 'You have qualified for free delivery.'}</p>
+        </div>
+      </section>
+      <section class="cart-summary-card">
+        <div class="cart-summary-row">
+          <span>Subtotal</span>
+          <strong>${formatMoney(subtotal, currencySymbol)}</strong>
+        </div>
+        <p>Tax included. Shipping calculated at checkout.</p>
+        <a href="${getSiteBasePath()}pages/checkout.html" class="cart-summary-checkout ${items.length ? '' : 'is-disabled'}">Checkout</a>
+        <div class="cart-summary-safe">This is a secure checkout</div>
+        <div class="cart-summary-count">${quantity} item${quantity === 1 ? '' : 's'} in cart</div>
+      </section>
+    `;
+  }
+
+  function renderCheckoutPage() {
+    const deliveryInput = document.querySelector('[data-checkout-shipping]');
+    const summaryTotal = document.querySelector('[data-checkout-total]');
+    const summarySubtotal = document.querySelector('[data-checkout-subtotal]');
+    const summaryShipping = document.querySelector('[data-checkout-shipping-copy]');
+    const itemsHost = document.querySelector('[data-checkout-items]');
+    const homePanel = document.querySelector('[data-home-delivery-panel]');
+    const pickupPanel = document.querySelector('[data-pickup-panel]');
+    const toggleButtons = document.querySelectorAll('[data-delivery-mode]');
+    const payButton = document.querySelector('[data-pay-now]');
+    if (!summaryTotal || !summarySubtotal || !summaryShipping || !itemsHost || !homePanel || !pickupPanel) return;
+
+    const { items, subtotal, currencySymbol, quantity } = getCartSummary();
+    const shippingValue = deliveryInput?.value === 'pickup' ? 0 : 0;
+    const total = subtotal + shippingValue;
+
+    summarySubtotal.textContent = `${formatMoney(subtotal, currencySymbol)} · ${quantity} item${quantity === 1 ? '' : 's'}`;
+    summaryShipping.textContent = deliveryInput?.value === 'pickup' ? 'Pickup point selected' : 'Enter shipping address';
+    summaryTotal.textContent = formatMoney(total, currencySymbol);
+    itemsHost.innerHTML = items.map((item) => `
+      <article class="checkout-order-item">
+        <div class="checkout-order-media">
+          <img src="${item.image}" alt="${item.name}" />
+          <span>${item.quantity}</span>
+        </div>
+        <div class="checkout-order-copy">
+          <h3>${item.name}</h3>
+          <p>${item.colour} / ${item.size}</p>
+        </div>
+        <strong>${formatMoney(item.amount * item.quantity, item.currencySymbol)}</strong>
+      </article>
+    `).join('');
+
+    toggleButtons.forEach((button) => {
+      const isActive = button.dataset.deliveryMode === (deliveryInput?.value || 'delivery');
+      button.classList.toggle('is-active', isActive);
+    });
+    homePanel.hidden = deliveryInput?.value === 'pickup';
+    pickupPanel.hidden = deliveryInput?.value !== 'pickup';
+    if (payButton) {
+      payButton.disabled = items.length === 0;
+    }
+  }
+
+  function renderCommerceUI() {
+    syncCartBadge();
+    renderCartDrawer();
+    renderWishlistButtons();
+    renderWishlistPage();
+    renderCartPage();
+    renderCheckoutPage();
+  }
+
   function getProductFromCard(card) {
     const title = card.querySelector('.product-info h3')?.textContent?.trim() || 'SoftGiggles product';
     const price = card.querySelector('.price')?.textContent?.trim() || '';
-    const image = card.querySelector('.product-img img')?.getAttribute('src') || '';
+    const imageValue = card.querySelector('.product-img img')?.getAttribute('src') || '';
     const category = document.querySelector('.page-header h1')?.textContent?.trim() || 'Catalog';
+    const { amount, currencySymbol } = parsePrice(price);
+    const image = imageValue ? new URL(imageValue, window.location.href).href : '';
     return {
       id: slugifyProductId(title),
       name: title,
       price,
       image,
-      category
+      category,
+      amount,
+      currencySymbol,
+      quantity: 1,
+      size: '3-6 MTHS',
+      colour: inferColour(title)
     };
   }
 
   async function handleCartAction(card, button, successLabel) {
-    const authHelper = getAuthHelper();
-    const account = readAccount();
-    if (!authHelper || !account || !account.loggedIn) {
-      promptAccountSignIn();
-      return;
-    }
-
     setButtonLoading(button, true);
     try {
       const product = getProductFromCard(card);
-      await authHelper.addToCart(product);
+      const cart = readCart();
+      const existingItem = cart.find((item) => item.id === product.id);
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.push(product);
+      }
+      writeCart(cart);
+      document.dispatchEvent(new CustomEvent('softgiggles:cart-open'));
+      renderCommerceUI();
       const defaultLabel = button.dataset.defaultLabel || button.textContent;
       button.textContent = successLabel;
       button.classList.add('is-added');
@@ -704,6 +1041,29 @@ document.addEventListener('DOMContentLoaded', () => {
       if (accountEmailFormWrap) accountEmailFormWrap.classList.add('is-open');
       if (accountPhoneFormWrap) accountPhoneFormWrap.classList.remove('is-open');
       setMethodVisibility('email');
+    });
+  }
+
+  if (accountForgotPasswordBtn && accountEmailInput) {
+    accountForgotPasswordBtn.addEventListener('click', async () => {
+      const authHelper = getAuthHelper();
+      if (!authHelper || typeof authHelper.resetPassword !== 'function') return;
+      const email = accountEmailInput.value.trim();
+      if (!email) {
+        window.alert('Enter your email address first so we can send the reset link.');
+        accountEmailInput.focus();
+        return;
+      }
+
+      accountForgotPasswordBtn.disabled = true;
+      try {
+        await authHelper.resetPassword(email);
+        showAccountSuccess('Password reset email sent');
+      } catch (error) {
+        window.alert(error.message || 'Could not send reset email.');
+      } finally {
+        accountForgotPasswordBtn.disabled = false;
+      }
     });
   }
 
@@ -797,7 +1157,12 @@ document.addEventListener('DOMContentLoaded', () => {
     accountPageLogout.addEventListener('click', async () => {
       const authHelper = getAuthHelper();
       if (authHelper) {
-        await authHelper.signOut();
+        try {
+          await authHelper.signOut();
+        } catch (error) {
+          window.alert(error.message || 'Could not log out.');
+        }
+        window.location.reload();
         return;
       }
       logoutAccount();
@@ -854,35 +1219,47 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Wishlist toggle
-  document.querySelectorAll('.wishlist-btn').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      e.stopPropagation();
-      const authHelper = getAuthHelper();
-      const account = readAccount();
-      if (!authHelper || !account || !account.loggedIn) {
-        promptAccountSignIn();
-        return;
+  const cartDrawerOverlay = document.getElementById('cart-drawer-overlay');
+  const cartDrawerClose = document.querySelector('.cart-drawer-close');
+
+  function openCartDrawer() {
+    if (!cartDrawerOverlay) return;
+    renderCartDrawer();
+    cartDrawerOverlay.hidden = false;
+    requestAnimationFrame(() => {
+      cartDrawerOverlay.classList.add('is-visible');
+    });
+  }
+
+  function closeCartDrawer() {
+    if (!cartDrawerOverlay) return;
+    cartDrawerOverlay.classList.remove('is-visible');
+    window.setTimeout(() => {
+      cartDrawerOverlay.hidden = true;
+    }, 240);
+  }
+
+  document.querySelectorAll('.wishlist-btn').forEach((btn) => {
+    btn.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const card = btn.closest('.product-card');
+      if (!card) return;
+      const product = getProductFromCard(card);
+      const wishlist = readWishlist();
+      const itemIndex = wishlist.findIndex((item) => item.id === product.id);
+      if (itemIndex >= 0) {
+        wishlist.splice(itemIndex, 1);
+      } else {
+        wishlist.unshift(product);
       }
-      setButtonLoading(btn, true);
-      try {
-        const card = btn.closest('.product-card');
-        if (!card) return;
-        const product = getProductFromCard(card);
-        const result = await authHelper.toggleWishlist(product);
-        btn.textContent = result.saved ? '♥' : '♡';
-        btn.style.color = result.saved ? '#e53e3e' : '#999';
-      } catch (error) {
-        window.alert(error.message || 'Could not update wishlist.');
-      } finally {
-        setButtonLoading(btn, false);
-      }
+      writeWishlist(wishlist);
+      renderCommerceUI();
     });
   });
 
-  document.querySelectorAll('.catalog-grid .product-card').forEach((card) => {
+  document.querySelectorAll('.product-card').forEach((card) => {
     const quickAddBtn = card.querySelector('.quick-add');
-    const productInfo = card.querySelector('.product-info');
+    const addBtn = card.querySelector('.add-btn');
 
     if (quickAddBtn) {
       quickAddBtn.textContent = 'Add to Cart';
@@ -893,33 +1270,91 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    if (productInfo && !productInfo.querySelector('.product-actions-row')) {
-      const actionsRow = document.createElement('div');
-      actionsRow.className = 'product-actions-row';
-
-      const addToCartBtn = document.createElement('button');
-      addToCartBtn.type = 'button';
-      addToCartBtn.className = 'order-online-btn';
-      addToCartBtn.textContent = 'Add to Cart';
-      addToCartBtn.dataset.defaultLabel = 'Add to Cart';
-      addToCartBtn.addEventListener('click', async (event) => {
+    if (addBtn) {
+      addBtn.dataset.defaultLabel = '+';
+      addBtn.addEventListener('click', async (event) => {
         event.stopPropagation();
-        await handleCartAction(card, addToCartBtn, 'Added');
+        await handleCartAction(card, addBtn, '✓');
       });
-
-      const orderOnlineBtn = document.createElement('button');
-      orderOnlineBtn.type = 'button';
-      orderOnlineBtn.className = 'order-online-btn';
-      orderOnlineBtn.textContent = 'Order Online';
-      orderOnlineBtn.dataset.defaultLabel = 'Order Online';
-      orderOnlineBtn.addEventListener('click', async (event) => {
-        event.stopPropagation();
-        await handleCartAction(card, orderOnlineBtn, 'Queued');
-      });
-
-      actionsRow.append(addToCartBtn, orderOnlineBtn);
-      productInfo.appendChild(actionsRow);
-      if (quickAddBtn) quickAddBtn.remove();
     }
   });
+
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+
+    const cartTrigger = target.closest('[data-cart-trigger]');
+    if (cartTrigger) {
+      event.preventDefault();
+      openCartDrawer();
+      return;
+    }
+
+    if (target === cartDrawerOverlay) {
+      closeCartDrawer();
+      return;
+    }
+
+    const qtyButton = target.closest('[data-cart-qty]');
+    if (qtyButton) {
+      const itemId = qtyButton.getAttribute('data-cart-qty');
+      const change = Number(qtyButton.getAttribute('data-cart-change') || 0);
+      const cart = readCart().map((item) => item.id === itemId ? { ...item, quantity: Math.max(1, Number(item.quantity || 1) + change) } : item);
+      writeCart(cart);
+      renderCommerceUI();
+      return;
+    }
+
+    const removeButton = target.closest('[data-cart-remove]');
+    if (removeButton) {
+      const itemId = removeButton.getAttribute('data-cart-remove');
+      writeCart(readCart().filter((item) => item.id !== itemId));
+      renderCommerceUI();
+      return;
+    }
+
+    const wishlistRemove = target.closest('[data-wishlist-remove]');
+    if (wishlistRemove) {
+      const itemId = wishlistRemove.getAttribute('data-wishlist-remove');
+      writeWishlist(readWishlist().filter((item) => item.id !== itemId));
+      renderCommerceUI();
+      return;
+    }
+
+    const wishlistAddCart = target.closest('[data-wishlist-add-cart]');
+    if (wishlistAddCart) {
+      const itemId = wishlistAddCart.getAttribute('data-wishlist-add-cart');
+      const wishlistItem = readWishlist().find((item) => item.id === itemId);
+      if (!wishlistItem) return;
+      const cart = readCart();
+      const existingItem = cart.find((item) => item.id === itemId);
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.unshift({ ...wishlistItem, quantity: 1 });
+      }
+      writeCart(cart);
+      renderCommerceUI();
+      openCartDrawer();
+      return;
+    }
+
+    const deliveryToggle = target.closest('[data-delivery-mode]');
+    if (deliveryToggle) {
+      const deliveryInput = document.querySelector('[data-checkout-shipping]');
+      if (deliveryInput) {
+        deliveryInput.value = deliveryToggle.getAttribute('data-delivery-mode') || 'delivery';
+        renderCheckoutPage();
+      }
+      return;
+    }
+  });
+
+  if (cartDrawerClose) {
+    cartDrawerClose.addEventListener('click', closeCartDrawer);
+  }
+
+  document.addEventListener('softgiggles:cart-open', openCartDrawer);
+
+  renderCommerceUI();
 });
